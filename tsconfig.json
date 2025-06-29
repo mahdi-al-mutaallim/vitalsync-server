@@ -1,32 +1,30 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "commonjs",
-    "lib": [
-      "ES2022"
-    ],
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "node10",
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "baseUrl": "./",
-    "paths": {
-      "@app/*": ["app/*"],
-      "@generated/*": ["../generated/*"]
-    },
-    "outDir": "build",
-    "sourceMap": true,
-    "allowJs": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noPropertyAccessFromIndexSignature": true
-  },
-  "include": ["src", "generated"],
-  "exclude": ["node_modules", "build", "dist", "bun.lock"]
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "commonjs",
+		"lib": ["ES2022"],
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node10",
+		"moduleDetection": "force",
+		"isolatedModules": true,
+		"baseUrl": "./src",
+		"paths": {
+			"@app/*": ["app/*", "./app/*", "../app/*"],
+			"@generated/*": ["../generated/*"]
+		},
+		"outDir": "build",
+		"sourceMap": true,
+		"allowJs": true,
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noPropertyAccessFromIndexSignature": true
+	},
+	"include": ["src", "generated"],
+	"exclude": ["node_modules", "build", "dist", "bun.lock"]
 }

@@ -8,18 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  SUPER_ADMIN
-  ADMIN
-  DOCTOR
-  PATIENT
-}
-
-enum UserStatus {
-  ACTIVE
-  BLOCKED
-}
-
 model User {
   id                 String     @id @default(uuid())
   email              String     @unique @db.VarChar(100)
@@ -46,4 +34,16 @@ model Admin {
   user         User     @relation(fields: [email], references: [email])
 
   @@map("admins")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
 }

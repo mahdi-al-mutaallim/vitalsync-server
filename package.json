@@ -1,25 +1,31 @@
 {
-  "name": "vitalsync-server",
-  "module": "src/index.ts",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "build": "tsc && tsc-alias",
-    "start": "node build/index.js"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.10.1",
-    "cors": "^2.8.5",
-    "express": "^5.1.0"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
-    "@types/node": "^24.0.7",
-    "prisma": "^6.10.1",
-    "tsc-alias": "^1.8.16",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3"
-  }
+	"name": "vitalsync-server",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "bun --watch src/index.ts",
+		"build": "tsc && tsc-alias",
+		"start": "node build/index.js",
+		"format": "bunx biome format --write",
+		"lint": "bunx biome lint --write",
+		"check": "bunx biome check --write"
+	},
+	"dependencies": {
+		"@prisma/client": "^6.10.1",
+		"bcrypt": "^6.0.0",
+		"cors": "^2.8.5",
+		"express": "^5.1.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.0.6",
+		"@types/bcrypt": "^5.0.2",
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.3",
+		"@types/node": "^24.0.7",
+		"prisma": "^6.10.1",
+		"tsc-alias": "^1.8.16",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.8.3"
+	}
 }
