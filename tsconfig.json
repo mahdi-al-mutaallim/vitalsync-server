@@ -1,16 +1,20 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "nodenext",
+    "module": "commonjs",
     "lib": [
       "ES2022"
     ],
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "moduleResolution": "node10",
     "moduleDetection": "force",
-    "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "rootDir": "src",
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@generated/*": ["../generated/*"]
+    },
     "outDir": "build",
     "sourceMap": true,
     "allowJs": true,
@@ -21,6 +25,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noPropertyAccessFromIndexSignature": true,
-  }
+    "noPropertyAccessFromIndexSignature": true
+  },
+  "include": ["src", "generated"],
+  "exclude": ["node_modules", "build", "dist", "bun.lock"]
 }
