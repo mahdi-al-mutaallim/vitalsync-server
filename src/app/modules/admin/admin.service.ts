@@ -6,21 +6,21 @@ const getAdmins = async (params: any) => {
 	const { search, ...filters } = params;
 	const AndConditions: Prisma.AdminWhereInput[] = [];
 	const admin_search_fields = ["name", "email"];
-	if (Object.keys(filters).length > 0) {
-    AndConditions.push({
-      AND: Object.keys(filters).map((key) => ({
-        [key]: {
-          equals: filters[key],
-				},
-			})),
-		});
-	}
 	if (search) {
     AndConditions.push({
       OR: admin_search_fields.map((field) => ({
         [field]: {
           contains: search,
 					mode: "insensitive",
+				},
+			})),
+		});
+	}
+  if (Object.keys(filters).length > 0) {
+    AndConditions.push({
+      AND: Object.keys(filters).map((key) => ({
+        [key]: {
+          equals: filters[key],
 				},
 			})),
 		});
