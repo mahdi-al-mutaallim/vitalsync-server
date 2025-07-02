@@ -1,6 +1,5 @@
 import "./paths";
-import { adminRoutes } from "@app/modules/admin/admin.routes";
-import { userRoutes } from "@app/modules/user/user.routes";
+import router from "@app/routes";
 import cors from "cors";
 import express, { type Application } from "express";
 import type { Server } from "http";
@@ -11,8 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/admins", adminRoutes);
+app.use("/api/v1", router);
 
 const port = 3000;
 

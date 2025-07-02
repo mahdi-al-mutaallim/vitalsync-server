@@ -11,7 +11,9 @@
 		"baseUrl": "./src",
 		"paths": {
 			"@app/*": ["app/*", "./app/*", "../app/*"],
-			"@generated/*": ["../generated/*"]
+			"@generated/*": ["generated/*","./generated/*","../generated/*"],
+      "@helpers/*": ["helpers/*","./helpers/*","../helpers/*"],
+      "@shared/*": ["shared/*", "./shared/*", "../shared/*"]
 		},
 		"outDir": "build",
 		"sourceMap": true,

@@ -7,5 +7,7 @@ register({
 	paths: {
 		"@app/*": ["src/app/*"],
 		"@generated/*": ["generated/*"],
+    "@shared/*":["shared/*"],
+    "@helpers/*": ["helpers/*"]
 	},
 });
