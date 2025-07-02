@@ -1,5 +1,8 @@
+import global_error_handler from "@app/middlewares/global-error-handler";
 import "./paths";
+import not_found from "@app/middlewares/not-found";
 import router from "@app/routes";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
 import type { Server } from "http";
@@ -9,8 +12,11 @@ const app: Application = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 app.use("/api/v1", router);
+app.use(global_error_handler)
+app.use(not_found)
 
 const port = 3000;
 

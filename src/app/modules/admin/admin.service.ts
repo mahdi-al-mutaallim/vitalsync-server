@@ -1,10 +1,12 @@
+import type { TPaginationOptions } from "@app/types/pagination";
 import type { Admin, Prisma } from "@generated/prisma";
 import { UserStatus } from "@generated/prisma";
 import { pagination_helper } from "@helpers/pagination-helper";
 import prisma from "@shared/prisma";
 import { admin_search_fields } from "./admin.constant";
+import type { TAdminQuery } from "./admin.types";
 
-const getAdmins = async (query: any, options: any) => {
+const getAdmins = async (query: TAdminQuery, options: TPaginationOptions) => {
 	const { search, ...filters } = query;
 	const { limit, skip, sort, order, page } =
 		pagination_helper.calculate_pagination(options);
@@ -23,7 +25,7 @@ const getAdmins = async (query: any, options: any) => {
 		AndConditions.push({
 			AND: Object.keys(filters).map((key) => ({
 				[key]: {
-					equals: filters[key],
+					equals: (filters as any)[key],
 				},
 			})),
 		});
