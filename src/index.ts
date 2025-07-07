@@ -5,7 +5,7 @@ import express, { type Application } from "express";
 import globalErrorHandler from "@/middlewares/globalErrorHandler.js";
 import notFound from "@/middlewares/notFound.js";
 import router from "@/routes/index.js";
-import { env } from "./env/index.js";
+import { config } from "./config/index.js";
 
 const app: Application = express();
 
@@ -25,7 +25,7 @@ app.get("/", (_req: express.Request, res: express.Response) => {
 });
 
 (async () => {
-	server = app.listen(env.port, () => {
-		console.log(`App is listening on port `, env.port);
+	server = app.listen(config.port, () => {
+		console.log(`App is listening on port `, config.port);
 	});
 })();

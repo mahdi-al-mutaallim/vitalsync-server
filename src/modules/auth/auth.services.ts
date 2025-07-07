@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { env } from "@/env/index.js";
+import type { SignOptions } from "jsonwebtoken";
+import { config } from "@/config/index.js";
 import { jwtHelpers } from "@/helpers/jwtHelpers.js";
 import appError from "@/shared/appError.js";
 import httpStatus from "@/shared/httpStatus.js";
@@ -14,15 +15,19 @@ const loginUserFromDB = async (payload: LoginPayload): Promise<AuthTokens> => {
 	if (!isCorrectPassword) {
 		throw new appError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
 	}
-	const accessToken = jwtHelpers.generateToken({ email, role }, env.accessTokenSecret, "5m");
-	const refreshToken = jwtHelpers.generateToken({ email, role }, env.refreshTokenSecret, "30d");
+	const accessToken = jwtHelpers.generateToken({ email, role }, config.accessTokenSecret, config.accessTokenExpiresIn);
+	const refreshToken = jwtHelpers.generateToken(
+		{ email, role },
+		config.refreshTokenSecret,
+		config.refreshTokenExpiresIn,
+	);
 	return { accessToken, refreshToken, needsPasswordChange: needPasswordChange };
 };
 
 const getNewAccessTokenByRefreshToken = async (token: string): Promise<NewAccessTokenResult> => {
 	let decoded: JwtUserPayload;
 	try {
-		decoded = jwtHelpers.verifyToken(token, env.refreshTokenSecret) as JwtUserPayload;
+		decoded = jwtHelpers.verifyToken(token, config.refreshTokenSecret) as JwtUserPayload;
 	} catch (error) {
 		console.error(error);
 		throw new appError(httpStatus.UNAUTHORIZED, "You are not authorized");
@@ -32,7 +37,7 @@ const getNewAccessTokenByRefreshToken = async (token: string): Promise<NewAccess
 		where: { email: decoded.email, status: UserStatus.ACTIVE },
 	});
 
-	const accessToken = jwtHelpers.generateToken({ email, role }, env.accessTokenSecret, "5m");
+	const accessToken = jwtHelpers.generateToken({ email, role }, config.accessTokenSecret, "5m");
 
 	return { accessToken, needsPasswordChange: needPasswordChange };
 };
