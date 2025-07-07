@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
 		"build": "tsc && tsc-alias -v",
-		"start": "node build/index.js",
+		"start": "node --env-file=.env dist/index.js",
 		"format": "bunx biome format --write",
 		"lint": "bunx biome lint --write",
 		"check": "bunx biome check --write"
@@ -17,7 +17,6 @@
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
 		"express": "^5.1.0",
-		"http-status": "^2.1.0",
 		"jsonwebtoken": "^9.0.2",
 		"zod": "^3.25.74"
 	},

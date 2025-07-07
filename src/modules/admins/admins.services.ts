@@ -1,23 +1,17 @@
 import { paginationHelper } from "@/helpers/paginationHelper.js";
 import type { Admin, Prisma } from "@/shared/prisma.js";
 import { prisma, UserStatus } from "@/shared/prisma.js";
-import type { PaginationOptions } from "@/types/pagination.js";
-import { AdminSearchFields } from "./admin.constant.js";
-import type { TAdminQuery } from "./admin.types.js";
+import type { PaginationQueryOptions } from "@/types/pagination.js";
+import { AdminSearchFields } from "./admins.constants.js";
+import type { TAdminQuery } from "./admins.types.js";
 
-const getAdmins = async (query: TAdminQuery, options: PaginationOptions) => {
+const getAdminsFromDB = async (query: TAdminQuery, options: PaginationQueryOptions) => {
 	const { search, ...filters } = query;
-	const { limit, skip, sort, order, page } =
-		paginationHelper.calculatePagination(options);
+	const { limit, skip, sort, order, page } = paginationHelper.calculatePagination(options);
 	const AndConditions: Prisma.AdminWhereInput[] = [];
 	if (search) {
 		AndConditions.push({
-			OR: AdminSearchFields.map((field) => ({
-				[field]: {
-					contains: search,
-					mode: "insensitive",
-				},
-			})),
+			OR: AdminSearchFields.map((field) => ({ [field]: { contains: search, mode: "insensitive" } })),
 		});
 	}
 	if (Object.keys(filters).length > 0) {
@@ -36,61 +30,44 @@ const getAdmins = async (query: TAdminQuery, options: PaginationOptions) => {
 		where: WhereConditions,
 		skip,
 		take: limit,
-		orderBy: {
-			[sort]: order,
-		},
+		orderBy: { [sort]: order },
 	});
-	const total = await prisma.admin.count({
-		where: WhereConditions,
-	});
-	return {
-		meta: {
-			page,
-			limit,
-			total,
-		},
-		data: result,
-	};
+	const total = await prisma.admin.count({ where: WhereConditions });
+	return { meta: { page, limit, total }, data: result };
 };
 
-const getAdminById = async (id: string): Promise<Admin | null> => {
+const getAdminByIdFromDB = async (id: string): Promise<Admin | null> => {
 	return await prisma.admin.findUnique({ where: { id, isDeleted: false } });
 };
 
-const updateAdminIntoDB = async (
-	id: string,
-	data: Partial<Admin>,
-): Promise<Admin> => {
+const updateAdminByIdIntoDB = async (id: string, data: Partial<Admin>): Promise<Admin> => {
 	return await prisma.admin.update({ where: { id, isDeleted: false }, data });
 };
 
-const deleteAdminFromDB = async (id: string): Promise<Admin> => {
+const deleteAdminByIdFromDB = async (id: string): Promise<Admin> => {
 	return await prisma.$transaction(async (tsx) => {
 		const deletedAdmin = await tsx.admin.delete({ where: { id } });
 		await tsx.user.delete({ where: { email: deletedAdmin.email } });
 		return deletedAdmin;
 	});
 };
-const softDeleteFromDB = async (id: string): Promise<Admin> => {
+const softDeleteAdminByIdFromDB = async (id: string): Promise<Admin> => {
 	return await prisma.$transaction(async (tsx) => {
 		const updateAdmin = await tsx.admin.update({
 			where: { id, isDeleted: false },
 			data: { isDeleted: true },
 		});
-		await tsx.user.update({
-			where: { email: updateAdmin.email },
-			data: { status: UserStatus.DELETED },
-		});
+		await tsx.user.update({ where: { email: updateAdmin.email }, data: { status: UserStatus.DELETED } });
 		return updateAdmin;
 	});
 };
 
 export const AdminServices = {
-	getAdmins,
-	getAdminById,
-	updateAdminIntoDB,
-	deleteAdminFromDB,
-	softDeleteFromDB,
+	getAdminsFromDB,
+	getAdminByIdFromDB,
+	updateAdminByIdIntoDB,
+	deleteAdminByIdFromDB,
+	softDeleteAdminByIdFromDB,
 };
 
 /*

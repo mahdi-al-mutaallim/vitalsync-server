@@ -1,9 +1,9 @@
 import { createRouter } from "@/shared/createRouter.js";
-import { auth_controllers } from "./auth.controller.js";
+import { AuthControllers } from "./auth.controllers.js";
 
 const router = createRouter();
 
-router.post("/login", auth_controllers.login_user);
-router.post("/refresh", auth_controllers.token_refresher);
+router.post("/login", AuthControllers.LoginUser);
+router.post("/refresh", AuthControllers.TokenRefresher);
 
 export const AuthRoutes = router;

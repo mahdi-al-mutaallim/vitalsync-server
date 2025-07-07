@@ -1,7 +1,7 @@
 import type { ErrorRequestHandler } from "express";
-import httpStatus from "http-status";
+import httpStatus from "@/shared/httpStatus.js";
 
-const global_error_handler: ErrorRequestHandler = (err, _req, res, _next) => {
+const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 	res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
 		status: "error",
 		message: err.message || "Something went wrong!",
@@ -9,4 +9,4 @@ const global_error_handler: ErrorRequestHandler = (err, _req, res, _next) => {
 	});
 };
 
-export default global_error_handler;
+export default globalErrorHandler;

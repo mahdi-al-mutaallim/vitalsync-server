@@ -2,9 +2,10 @@ import type { Server } from "node:http";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Application } from "express";
-import global_error_handler from "@/middlewares/global-error-handler.js";
-import not_found from "@/middlewares/not-found.js";
+import globalErrorHandler from "@/middlewares/globalErrorHandler.js";
+import notFound from "@/middlewares/notFound.js";
 import router from "@/routes/index.js";
+import { env } from "./env/index.js";
 
 const app: Application = express();
 
@@ -14,10 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/v1", router);
-app.use(global_error_handler);
-app.use(not_found);
-
-const port = 3000;
+app.use(globalErrorHandler);
+app.use(notFound);
 
 export let server: Server;
 
@@ -26,7 +25,7 @@ app.get("/", (_req: express.Request, res: express.Response) => {
 });
 
 (async () => {
-	server = app.listen(port, () => {
-		console.log(`App is listening on port `, port);
+	server = app.listen(env.port, () => {
+		console.log(`App is listening on port `, env.port);
 	});
 })();

@@ -1,6 +1,6 @@
-import { AdminRoutes } from "@/modules/admin/admin.routes.js";
+import { AdminRoutes } from "@/modules/admins/admins.routes.js";
 import { AuthRoutes } from "@/modules/auth/auth.routes.js";
-import { UserRoutes } from "@/modules/user/user.routes.js";
+import { UserRoutes } from "@/modules/users/users.routes.js";
 import { createRouter, type TRouter } from "@/shared/createRouter.js";
 
 const router = createRouter();

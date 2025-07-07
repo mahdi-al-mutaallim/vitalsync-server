@@ -1,12 +1,23 @@
-export type SortOrder = "asc" | "desc";
-type QueryOptionsObject = Record<"page" | "limit" | "skip" | "sort", number>;
-type InputOptions = Omit<QueryOptionsObject, "skip">;
-type InputOptionsToString = { [K in keyof InputOptions]: string };
-type InputOptionsExtra = { order: SortOrder | (string & {}) };
-export type PaginationOptions = Partial<
-	InputOptionsToString & InputOptionsExtra
->;
-export type PaginationOptionsResult = Omit<QueryOptionsObject, "sort"> & {
+// "asc" | "desc" is clear already
+export type SortDirection = "asc" | "desc";
+
+// The core query options with numbers
+type QueryParams = Record<"page" | "limit" | "skip" | "sort", number>;
+
+// Input params without `skip`
+type InputQueryParams = Omit<QueryParams, "skip">;
+
+// Stringified version of InputQueryParams
+type StringifiedInputQueryParams = { [K in keyof InputQueryParams]: string };
+
+// Adds sort direction explicitly
+type SortOptions = { order: SortDirection | (string & {}) };
+
+// The options the user can pass for pagination, strings & optional
+export type PaginationQueryOptions = Partial<StringifiedInputQueryParams & SortOptions>;
+
+// The fully-resolved pagination result with proper types
+export type ResolvedPaginationOptions = Omit<QueryParams, "sort"> & {
 	sort: string;
-	order: SortOrder;
+	order: SortDirection;
 };
