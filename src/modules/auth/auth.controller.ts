@@ -1,8 +1,7 @@
-import catch_async from "@shared/catch-async";
-import send_response from "@shared/send-response";
 import httpStatus from "http-status";
-import { resolve } from "path";
-import { auth_services } from "./auth.service";
+import catch_async from "@/shared/catchAsync.js";
+import send_response from "@/shared/sendResponse.js";
+import { auth_services } from "./auth.service.js";
 
 const login_user = catch_async(async (req, res) => {
 	const result = await auth_services.login_user(req.body);

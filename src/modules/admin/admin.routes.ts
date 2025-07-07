@@ -1,9 +1,9 @@
-import validate_request from "@app/middlewares/validate-request";
-import { Router } from "express";
-import { AdminControllers } from "./admin.controller";
-import { admin_validation_schemas } from "./admin.validations";
+import validate_request from "@/middlewares/validate-request.js";
+import { createRouter } from "@/shared/createRouter.js";
+import { AdminControllers } from "./admin.controller.js";
+import { admin_validation_schemas } from "./admin.validations.js";
 
-const router = Router();
+const router = createRouter();
 
 router.get("/", AdminControllers.getAdmins);
 router.get("/:id", AdminControllers.getAdminById);
@@ -15,4 +15,4 @@ router.patch(
 router.delete("/:id", AdminControllers.deleteAdminFromDB);
 router.patch("/:id/delete", AdminControllers.softDeleteAdminFromDB);
 
-export const admin_routes = router;
+export const AdminRoutes = router;

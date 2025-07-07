@@ -1,6 +1,6 @@
 import type { Response } from "express";
 
-const send_response = <T>(
+const sendResponse = <T>(
 	res: Response,
 	data: {
 		code: number;
@@ -22,4 +22,4 @@ const send_response = <T>(
 	});
 };
 
-export default send_response;
+export default sendResponse;

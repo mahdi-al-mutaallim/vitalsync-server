@@ -10,11 +10,11 @@ import type { RequestHandler } from "express";
  * ✅ Supports both synchronous and asynchronous handlers.
  * ✅ Shorter and uses built-in RequestHandler type.
  */
-const catch_async = (fn: RequestHandler): RequestHandler => {
+const catchAsync = (fn: RequestHandler): RequestHandler => {
 	return (req, res, next) => {
 		// Ensures even sync exceptions are turned into Promise rejections
 		return Promise.resolve(fn(req, res, next)).catch(next);
 	};
 };
 
-export default catch_async;
+export default catchAsync;

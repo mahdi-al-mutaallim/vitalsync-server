@@ -5,7 +5,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "bun --watch src/index.ts",
-		"build": "tsc && tsc-alias",
+		"build": "tsc && tsc-alias -v",
 		"start": "node build/index.js",
 		"format": "bunx biome format --write",
 		"lint": "bunx biome lint --write",
@@ -31,7 +31,6 @@
 		"@types/node": "^24.0.10",
 		"prisma": "^6.11.0",
 		"tsc-alias": "^1.8.16",
-		"tsconfig-paths": "^4.2.0",
 		"typescript": "^5.8.3"
 	}
 }

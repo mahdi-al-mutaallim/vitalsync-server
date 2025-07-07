@@ -1,19 +1,18 @@
-import type { TPaginationOptions } from "@app/types/pagination";
-import type { Admin, Prisma } from "@generated/prisma";
-import { UserStatus } from "@generated/prisma";
-import { pagination_helper } from "@helpers/pagination-helper";
-import prisma from "@shared/prisma";
-import { admin_search_fields } from "./admin.constant";
-import type { TAdminQuery } from "./admin.types";
+import { paginationHelper } from "@/helpers/paginationHelper.js";
+import type { Admin, Prisma } from "@/shared/prisma.js";
+import { prisma, UserStatus } from "@/shared/prisma.js";
+import type { PaginationOptions } from "@/types/pagination.js";
+import { AdminSearchFields } from "./admin.constant.js";
+import type { TAdminQuery } from "./admin.types.js";
 
-const getAdmins = async (query: TAdminQuery, options: TPaginationOptions) => {
+const getAdmins = async (query: TAdminQuery, options: PaginationOptions) => {
 	const { search, ...filters } = query;
 	const { limit, skip, sort, order, page } =
-		pagination_helper.calculate_pagination(options);
+		paginationHelper.calculatePagination(options);
 	const AndConditions: Prisma.AdminWhereInput[] = [];
 	if (search) {
 		AndConditions.push({
-			OR: admin_search_fields.map((field) => ({
+			OR: AdminSearchFields.map((field) => ({
 				[field]: {
 					contains: search,
 					mode: "insensitive",
@@ -23,9 +22,9 @@ const getAdmins = async (query: TAdminQuery, options: TPaginationOptions) => {
 	}
 	if (Object.keys(filters).length > 0) {
 		AndConditions.push({
-			AND: Object.keys(filters).map((key) => ({
+			AND: (Object.keys(filters) as (keyof typeof filters)[]).map((key) => ({
 				[key]: {
-					equals: (filters as any)[key],
+					equals: filters[key],
 				},
 			})),
 		});

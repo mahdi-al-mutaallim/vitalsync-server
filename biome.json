@@ -6,19 +6,29 @@
 		"useIgnoreFile": false
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!generated/**",
+			"!node_modules/**",
+			"!prisma/**",
+			"!dist/**",
+			"!bun.lockb",
+			"!bun.lock",
+			"!package.json",
+			"!pnpm-lock.yaml",
+			"!yarn.lock"
+		]
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab",
-		"includes": ["src/*/**"]
+		"indentStyle": "tab"
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
 			"recommended": true
-		},
-		"includes": ["src/*/**"]
+		}
 	},
 	"javascript": {
 		"formatter": {

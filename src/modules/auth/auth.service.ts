@@ -38,7 +38,10 @@ const login_user = async (payload: { email: string; password: string }) => {
 const token_refresher = async (token: string) => {
 	let decoded: JwtPayload;
 	try {
-		decoded = jwt_helpers.verify_token(token, "abcdefghijktuvwxyz") as JwtPayload;
+		decoded = jwt_helpers.verify_token(
+			token,
+			"abcdefghijktuvwxyz",
+		) as JwtPayload;
 	} catch (error) {
 		console.error(error);
 		throw new Error("You are not authorized");
@@ -46,7 +49,7 @@ const token_refresher = async (token: string) => {
 	const UserData = await prisma.user.findUniqueOrThrow({
 		where: {
 			email: decoded?.["email"],
-      status: UserStatus.ACTIVE,
+			status: UserStatus.ACTIVE,
 		},
 	});
 	const access_token = jwt_helpers.generate_token(

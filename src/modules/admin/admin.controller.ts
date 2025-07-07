@@ -1,16 +1,16 @@
-import catch_async from "@shared/catch-async";
-import send_response from "@shared/send-response";
 import httpStatus from "http-status";
-import pick from "shared/pick";
-import { admin_query_fields } from "./admin.constant";
-import { AdminServices } from "./admin.service";
+import catchAsync from "@/shared/catchAsync.js";
+import pick from "@/shared/pick.js";
+import sendResponse from "@/shared/sendResponse.js";
+import { AdminQueryFields } from "./admin.constant.js";
+import { AdminServices } from "./admin.service.js";
 
-const getAdmins = catch_async(async (req, res) => {
-	const filters = pick(req.query, admin_query_fields);
+const getAdmins = catchAsync(async (req, res) => {
+	const filters = pick(req.query, AdminQueryFields);
 	const options = pick(req.query, ["limit", "page", "sort", "order"]);
 	const result = await AdminServices.getAdmins(filters, options);
 	if (result.data.length === 0) {
-		send_response(res, {
+		sendResponse(res, {
 			code: httpStatus.OK,
 			status: "success",
 			message: "No administrators found.",
@@ -18,7 +18,7 @@ const getAdmins = catch_async(async (req, res) => {
 			data: result.data,
 		});
 	}
-	send_response(res, {
+	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "Administrators retrieved successfully!",
@@ -27,10 +27,10 @@ const getAdmins = catch_async(async (req, res) => {
 	});
 });
 
-const getAdminById = catch_async(async (req, res) => {
+const getAdminById = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	const result = await AdminServices.getAdminById(id as string);
-	send_response(res, {
+	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "Administrator retrieved successfully!",
@@ -38,10 +38,10 @@ const getAdminById = catch_async(async (req, res) => {
 	});
 });
 
-const updateAdminIntoDB = catch_async(async (req, res) => {
+const updateAdminIntoDB = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	const result = await AdminServices.updateAdminIntoDB(id as string, req.body);
-	send_response(res, {
+	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "Administrator updated successfully!",
@@ -49,10 +49,10 @@ const updateAdminIntoDB = catch_async(async (req, res) => {
 	});
 });
 
-const deleteAdminFromDB = catch_async(async (req, res) => {
+const deleteAdminFromDB = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	const result = await AdminServices.deleteAdminFromDB(id as string);
-	send_response(res, {
+	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "Administrator deleted successfully!",
@@ -60,10 +60,10 @@ const deleteAdminFromDB = catch_async(async (req, res) => {
 	});
 });
 
-const softDeleteAdminFromDB = catch_async(async (req, res) => {
+const softDeleteAdminFromDB = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	const result = await AdminServices.softDeleteFromDB(id as string);
-	send_response(res, {
+	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "Administrator deleted successfully!",
