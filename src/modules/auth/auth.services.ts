@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import type { SignOptions } from "jsonwebtoken";
 import { config } from "@/config/index.js";
 import { jwtHelpers } from "@/helpers/jwtHelpers.js";
 import appError from "@/shared/appError.js";
