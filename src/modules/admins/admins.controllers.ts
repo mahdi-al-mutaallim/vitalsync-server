@@ -1,4 +1,4 @@
-import appError from "@/shared/appError.js";
+import ApiError from "@/errors/ApiError.js";
 import catchAsync from "@/shared/catchAsync.js";
 import httpStatus from "@/shared/httpStatus.js";
 import pick from "@/shared/pick.js";
@@ -11,7 +11,7 @@ const getAdmins = catchAsync(async (req, res) => {
 	const options = pick(req.query, ["limit", "page", "sort", "order"]);
 	const result = await AdminServices.getAdminsFromDB(filters, options);
 	if (result.data.length === 0) {
-		throw new appError(httpStatus.NOT_FOUND, "No administrators found.");
+		throw new ApiError(httpStatus.NOT_FOUND, "No administrators found.");
 	}
 	sendResponse(res, {
 		code: httpStatus.OK,
@@ -25,11 +25,11 @@ const getAdmins = catchAsync(async (req, res) => {
 const getAdminById = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	if (!id) {
-		throw new appError(httpStatus.BAD_REQUEST, "Administrator ID is required");
+		throw new ApiError(httpStatus.BAD_REQUEST, "Administrator ID is required");
 	}
 	const result = await AdminServices.getAdminByIdFromDB(id);
 	if (!result) {
-		throw new appError(httpStatus.NOT_FOUND, "Administrator not found");
+		throw new ApiError(httpStatus.NOT_FOUND, "Administrator not found");
 	}
 	sendResponse(res, {
 		code: httpStatus.OK,
@@ -42,11 +42,11 @@ const getAdminById = catchAsync(async (req, res) => {
 const updateAdminById = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	if (!id) {
-		throw new appError(httpStatus.BAD_REQUEST, "Administrator ID is required");
+		throw new ApiError(httpStatus.BAD_REQUEST, "Administrator ID is required");
 	}
 	const result = await AdminServices.updateAdminByIdIntoDB(id, req.body);
 	if (!result) {
-		throw new appError(httpStatus.NOT_FOUND, "Administrator not found");
+		throw new ApiError(httpStatus.NOT_FOUND, "Administrator not found");
 	}
 	sendResponse(res, {
 		code: httpStatus.OK,
@@ -59,11 +59,11 @@ const updateAdminById = catchAsync(async (req, res) => {
 const deleteAdminById = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	if (!id) {
-		throw new appError(httpStatus.BAD_REQUEST, "Administrator ID is required");
+		throw new ApiError(httpStatus.BAD_REQUEST, "Administrator ID is required");
 	}
 	const result = await AdminServices.deleteAdminByIdFromDB(id);
 	if (!result) {
-		throw new appError(httpStatus.NOT_FOUND, "Administrator not found");
+		throw new ApiError(httpStatus.NOT_FOUND, "Administrator not found");
 	}
 	sendResponse(res, {
 		code: httpStatus.OK,
@@ -76,11 +76,11 @@ const deleteAdminById = catchAsync(async (req, res) => {
 const softDeleteAdminById = catchAsync(async (req, res) => {
 	const { id } = req.params;
 	if (!id) {
-		throw new appError(httpStatus.BAD_REQUEST, "Administrator ID is required");
+		throw new ApiError(httpStatus.BAD_REQUEST, "Administrator ID is required");
 	}
 	const result = await AdminServices.softDeleteAdminByIdFromDB(id);
 	if (!result) {
-		throw new appError(httpStatus.NOT_FOUND, "Administrator not found");
+		throw new ApiError(httpStatus.NOT_FOUND, "Administrator not found");
 	}
 	sendResponse(res, {
 		code: httpStatus.OK,

@@ -26,6 +26,6 @@ app.get("/", (_req: express.Request, res: express.Response) => {
 
 (async () => {
 	server = app.listen(config.port, () => {
-		console.log(`App is listening on port `, config.port);
+		console.log(`App is listening on port`, config.port);
 	});
 })();

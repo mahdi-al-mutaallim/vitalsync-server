@@ -18,10 +18,12 @@
 		"cors": "^2.8.5",
 		"express": "^5.1.0",
 		"jsonwebtoken": "^9.0.2",
-		"zod": "^3.25.74"
+		"zod": "^3.25.76"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.0.6",
+		"@biomejs/biome": "2.1.0",
+		"@total-typescript/ts-reset": "^0.6.1",
+		"@total-typescript/tsconfig": "^1.0.4",
 		"@types/bcrypt": "^5.0.2",
 		"@types/cookie-parser": "^1.4.9",
 		"@types/cors": "^2.8.19",
