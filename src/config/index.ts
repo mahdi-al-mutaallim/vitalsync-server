@@ -11,14 +11,14 @@ const emptyStringCheck = (val: unknown) => (typeof val === "string" && val.trim(
 const withEmptyStringCheck = <T extends z.ZodTypeAny>(schema: T) => z.preprocess(emptyStringCheck, schema);
 
 // ✅ Schema builder for required strings with field-aware error
-const createRequiredString = (field: string) =>
+const createRequiredString = (field: string, min: number = 1) =>
 	withEmptyStringCheck(
 		z
 			.string({
 				required_error: `${field} is required`,
 			})
-			.min(16, {
-				message: `${field} must be at least 16 characters`,
+			.min(min, {
+				message: `${field} must be at least ${min} character${min > 1 && "s"}`,
 			}),
 	);
 
@@ -33,17 +33,21 @@ const createExpiresIn = (field: string, defaultVal: ExpiresIn) =>
 	);
 
 // ✅ Env schema with all fields validated
-const envSchema = z
+export const envSchema = z
 	.object({
 		port: withEmptyStringCheck(z.coerce.number().int().positive().default(3000)),
 
 		nodeEnv: withEmptyStringCheck(z.enum(["development", "production", "test"]).default("development")),
 
-		accessTokenSecret: createRequiredString("ACCESS_TOKEN_SECRET"),
-		refreshTokenSecret: createRequiredString("REFRESH_TOKEN_SECRET"),
+		accessTokenSecret: createRequiredString("ACCESS_TOKEN_SECRET", 16),
+		refreshTokenSecret: createRequiredString("REFRESH_TOKEN_SECRET", 16),
+		resetTokenSecret: createRequiredString("RESET_TOKEN_SECRET", 16),
 
 		accessTokenExpiresIn: createExpiresIn("ACCESS_TOKEN_EXPIRES_IN", "30m"),
 		refreshTokenExpiresIn: createExpiresIn("REFRESH_TOKEN_EXPIRES_IN", "7d"),
+		resetTokenExpiresIn: createExpiresIn("RESET_TOKEN_EXPIRES_IN", "5m"),
+
+		resetPasswordLinkPrefix: createRequiredString("RESET_PASS_LINK_PREFIX"),
 	})
 	.strict();
 
@@ -53,8 +57,11 @@ const rawEnv = {
 	nodeEnv: process.env.NODE_ENV,
 	accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
 	refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+	resetTokenSecret: process.env.RESET_TOKEN_SECRET,
 	accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
 	refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+	resetTokenExpiresIn: process.env.RESET_TOKEN_EXPIRES_IN,
+	resetPasswordLinkPrefix: process.env.RESET_PASS_LINK_PREFIX,
 };
 
 // ✅ Parse and validate
