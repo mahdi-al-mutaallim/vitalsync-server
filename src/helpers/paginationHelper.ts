@@ -5,8 +5,8 @@ const isProperSortOption = (value: unknown): value is string => typeof value ===
 const isValidOrder = (value: unknown): value is "asc" | "desc" => value === "asc" || value === "desc";
 
 const calculatePagination = (options: PaginationQueryOptions): ResolvedPaginationOptions => {
-	const page = Math.max(1, parseInt(options.page || "1", 10) || 1);
-	const limit = Math.max(1, parseInt(options.limit || "10", 10) || 10);
+	const page = Math.max(1, Number.parseInt(options.page || "1", 10) || 1);
+	const limit = Math.max(1, Number.parseInt(options.limit || "10", 10) || 10);
 	const skip = (page - 1) * limit;
 
 	const hasValidSort = isProperSortOption(options.sort);

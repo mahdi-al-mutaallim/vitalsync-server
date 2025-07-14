@@ -3,11 +3,12 @@ import path from "node:path";
 import type { UploadApiResponse } from "cloudinary";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
+import { config } from "@/config/index.js";
 
 cloudinary.config({
-	cloud_name: "tcm-cloud",
-	api_key: "214981888394651",
-	api_secret: "iNDwf0bq78NT1kCA773kj0vzYew",
+	cloud_name: config.cloudinaryCloudName,
+	api_key: config.cloudinaryApiKey,
+	api_secret: config.cloudinaryApiSecret,
 	secure: true,
 });
 

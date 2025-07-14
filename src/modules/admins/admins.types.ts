@@ -1,1 +1,1 @@
-export type TAdminQuery = Partial<Record<"search" | "name" | "email" | "contactNo", string>>;
+export type AdminQuery = Partial<Record<"search" | "name" | "email" | "contactNo", string>>;

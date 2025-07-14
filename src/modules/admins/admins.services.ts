@@ -3,9 +3,9 @@ import type { Admin, Prisma } from "@/shared/prisma.js";
 import { prisma, UserStatus } from "@/shared/prisma.js";
 import type { PaginationQueryOptions } from "@/types/pagination.js";
 import { AdminSearchFields } from "./admins.constants.js";
-import type { TAdminQuery } from "./admins.types.js";
+import type { AdminQuery } from "./admins.types.js";
 
-const getAdminsFromDB = async (query: TAdminQuery, options: PaginationQueryOptions) => {
+const getAdminsFromDB = async (query: AdminQuery, options: PaginationQueryOptions) => {
 	const { search, ...filters } = query;
 	const { limit, skip, sort, order, page } = paginationHelper.calculatePagination(options);
 	const AndConditions: Prisma.AdminWhereInput[] = [];

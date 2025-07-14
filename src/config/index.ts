@@ -11,11 +11,11 @@ const emptyStringCheck = (val: unknown) => (typeof val === "string" && val.trim(
 const withEmptyStringCheck = <T extends z.ZodTypeAny>(schema: T) => z.preprocess(emptyStringCheck, schema);
 
 // ✅ Schema builder for required strings with field-aware error
-const createRequiredString = (field: string, min: number = 1) =>
+const createRequiredString = (field: string, min = 1) =>
 	withEmptyStringCheck(
 		z
 			.string({
-				required_error: `${field} is required`,
+				error: `${field} is required`,
 			})
 			.min(min, {
 				message: `${field} must be at least ${min} character${min > 1 && "s"}`,
@@ -48,6 +48,9 @@ export const envSchema = z
 		resetTokenExpiresIn: createExpiresIn("RESET_TOKEN_EXPIRES_IN", "5m"),
 
 		resetPasswordLinkPrefix: createRequiredString("RESET_PASS_LINK_PREFIX"),
+		cloudinaryCloudName: createRequiredString("CLOUDINARY_CLOUD_NAME"),
+		cloudinaryApiKey: createRequiredString("CLOUDINARY_API_KEY"),
+		cloudinaryApiSecret: createRequiredString("CLOUDINARY_API_SECRET"),
 	})
 	.strict();
 
@@ -62,6 +65,9 @@ const rawEnv = {
 	refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
 	resetTokenExpiresIn: process.env.RESET_TOKEN_EXPIRES_IN,
 	resetPasswordLinkPrefix: process.env.RESET_PASS_LINK_PREFIX,
+	cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+	cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+	cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
 };
 
 // ✅ Parse and validate

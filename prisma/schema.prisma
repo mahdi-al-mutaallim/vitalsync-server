@@ -9,31 +9,73 @@ datasource db {
 }
 
 model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique @db.VarChar(100)
-  password           String
-  role               UserRole   @default(PATIENT)
+  id                  String     @id @default(uuid())
+  email               String     @unique @db.VarChar(100)
+  password            String
+  role                UserRole   @default(PATIENT)
   needsPasswordChange Boolean    @default(true)
-  status             UserStatus @default(ACTIVE)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  admin              Admin?
+  status              UserStatus @default(ACTIVE)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  admin               Admin?
+  doctor              Doctor?
+  patient             Patient?
 
   @@map("users")
 }
 
 model Admin {
-  id           String   @id @default(uuid())
-  name         String   @db.VarChar(100)
-  email        String   @unique @db.VarChar(100)
-  profilePhoto String?
-  isDeleted    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  contactNo    String   @db.VarChar(20)
-  user         User     @relation(fields: [email], references: [email])
+  id              String    @id @default(uuid())
+  name            String    @db.VarChar(100)
+  email           String    @unique @db.VarChar(100)
+  profilePhotoUrl String?
+  isDeleted       Boolean   @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  contactNo       String    @db.VarChar(20)
+  user            User      @relation(fields: [email], references: [email])
 
   @@map("admins")
+}
+
+model Doctor {
+  id                  String    @id @default(uuid())
+  name                String    @db.VarChar(100)
+  email               String    @unique @db.VarChar(100)
+  profilePhotoUrl     String?
+  contactNo           String    @db.VarChar(20)
+  address             String?
+  registrationNo      String    @unique @db.VarChar(200)
+  experienceInYears   Int       @default(0)
+  gender              Gender
+  appointmentFee      Int
+  qualification       String
+  currentWorkingPlace String
+  designation         String
+  isDeleted           Boolean   @default(false)
+  deletedAt           DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  user                User      @relation(fields: [email], references: [email])
+
+  @@map("doctors")
+}
+
+model Patient {
+  id              String    @id @default(uuid())
+  name            String    @db.VarChar(100)
+  email           String    @unique @db.VarChar(100)
+  profilePhotoUrl String?
+  contactNo       String?   @db.VarChar(20)
+  address         String?
+  isDeleted       Boolean   @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [email], references: [email])
+
+  @@map("patients")
 }
 
 enum UserRole {
@@ -47,4 +89,9 @@ enum UserStatus {
   ACTIVE
   BLOCKED
   DELETED
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
