@@ -1,12 +1,19 @@
 import bcrypt from "bcrypt";
+import ApiError from "@/errors/ApiError.js";
 import { fileUploader } from "@/helpers/fileUploader.js";
 import { paginationHelper } from "@/helpers/paginationHelper.js";
+import httpStatus from "@/shared/httpStatus.js";
 import { type Prisma, prisma, UserRole, UserStatus } from "@/shared/prisma.js";
 import type { PaginationQueryOptions } from "@/types/pagination.js";
 import { UserSearchFields } from "./user.constants.js";
-import type { CreateAdmin, CreateDoctor, CreatePatient, UserQuery } from "./users.types.js";
-import ApiError from "@/errors/ApiError.js";
-import httpStatus from "@/shared/httpStatus.js";
+import type {
+  CreateAdmin,
+  CreateDoctor,
+  CreatePatient,
+  ProfileDetails,
+  UserProfile,
+  UserQuery,
+} from "./users.types.js";
 
 const createAdmin = async (file: Express.Multer.File | undefined, payload: CreateAdmin) => {
   if (file) {
@@ -71,30 +78,69 @@ const getUsersFromDB = async (query: UserQuery, options: PaginationQueryOptions)
     skip,
     take: limit,
     orderBy: { [sort]: order },
-    omit: {
-      password: true
-    },
-    include: {
-      admin: true,
-      doctor: true,
-      patient: true
-    }
+    omit: { password: true },
+    include: { admin: true, doctor: true, patient: true },
   });
   const total = await prisma.user.count({ where: WhereConditions });
   return { meta: { page, limit, total }, data: result };
 };
 
-const getUserByIdFromDB = async (id: string) => {
-  return await prisma.user.findUniqueOrThrow(({ where: { id, status: UserStatus.ACTIVE } }))
-}
+const getUserByIdFromDB = async (id: string): Promise<UserProfile> => {
+  const userDetails = await prisma.user.findUniqueOrThrow({
+    where: { id, status: UserStatus.ACTIVE },
+    omit: { password: true, createdAt: true, updatedAt: true },
+  });
+
+  let profileDetails: ProfileDetails = {
+    name: "",
+    contactNo: "",
+    profilePhotoUrl: "",
+  };
+
+  switch (userDetails.role) {
+    case UserRole.SUPERADMIN:
+    case UserRole.ADMIN:
+      profileDetails = await prisma.admin.findUniqueOrThrow({
+        where: { email: userDetails.email },
+        select: { name: true, profilePhotoUrl: true, contactNo: true },
+      });
+      break;
+
+    case UserRole.DOCTOR:
+      profileDetails = await prisma.doctor.findUniqueOrThrow({
+        where: { email: userDetails.email },
+        select: { name: true, profilePhotoUrl: true, contactNo: true },
+      });
+      break;
+
+    case UserRole.PATIENT:
+      profileDetails = await prisma.patient.findUniqueOrThrow({
+        where: { email: userDetails.email },
+        select: { name: true, profilePhotoUrl: true, contactNo: true },
+      });
+      break;
+
+    default:
+      throw new Error(`Unhandled role: ${userDetails.role}`);
+  }
+
+  return {
+    ...userDetails,
+    ...profileDetails,
+  };
+};
 
 const changeStatusByIdFromDB = async (id: string, status: UserStatus) => {
-  const userData = await prisma.user.findUniqueOrThrow({ where: { id } })
+  const userData = await prisma.user.findUniqueOrThrow({ where: { id } });
   if (userData.status === status) {
     throw new ApiError(httpStatus.CONFLICT, `User status is already '${status}`);
   }
-  return await prisma.user.update({ where: { id }, data: { status } })
-}
+  return await prisma.user.update({ where: { id }, data: { status } });
+};
+
+const updateMyProfileIntoDB = async (id: string, file: Express.Multer.File | undefined, payload: CreateAdmin) => {
+  console.log(id, file, payload);
+};
 
 export const UserServices = {
   createAdmin,
@@ -102,5 +148,6 @@ export const UserServices = {
   createPatient,
   getUsersFromDB,
   changeStatusByIdFromDB,
-  getUserByIdFromDB
+  getUserByIdFromDB,
+  updateMyProfileIntoDB,
 };

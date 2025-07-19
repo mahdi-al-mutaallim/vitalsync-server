@@ -9,16 +9,20 @@ import type { AuthTokens, JwtUserPayload, LoginPayload, NewAccessTokenResult } f
 import { sendEmail } from "./auth.utils.js";
 
 const loginUserFromDB = async (payload: LoginPayload): Promise<AuthTokens> => {
-	const { needsPasswordChange, password, email, role } = await prisma.user.findUniqueOrThrow({
+	const { needsPasswordChange, password, email, role, id } = await prisma.user.findUniqueOrThrow({
 		where: { email: payload.email, status: UserStatus.ACTIVE },
 	});
 	const isCorrectPassword: boolean = await bcrypt.compare(payload.password, password);
 	if (!isCorrectPassword) {
 		throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
 	}
-	const accessToken = jwtHelpers.generateToken({ email, role }, config.accessTokenSecret, config.accessTokenExpiresIn);
+	const accessToken = jwtHelpers.generateToken(
+		{ id, email, role },
+		config.accessTokenSecret,
+		config.accessTokenExpiresIn,
+	);
 	const refreshToken = jwtHelpers.generateToken(
-		{ email, role },
+		{ id, email, role },
 		config.refreshTokenSecret,
 		config.refreshTokenExpiresIn,
 	);
@@ -34,11 +38,11 @@ const getNewAccessTokenByRefreshToken = async (token: string): Promise<NewAccess
 		throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized");
 	}
 
-	const { email, role, needsPasswordChange } = await prisma.user.findUniqueOrThrow({
+	const { email, role, needsPasswordChange, id } = await prisma.user.findUniqueOrThrow({
 		where: { email: decoded.email, status: UserStatus.ACTIVE },
 	});
 
-	const accessToken = jwtHelpers.generateToken({ email, role }, config.accessTokenSecret, "5m");
+	const accessToken = jwtHelpers.generateToken({ id, email, role }, config.accessTokenSecret, "5m");
 
 	return { accessToken, needsPasswordChange };
 };

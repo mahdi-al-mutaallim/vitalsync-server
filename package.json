@@ -12,19 +12,19 @@
 		"check": "bunx biome check --write"
 	},
 	"dependencies": {
-		"@prisma/client": "^6.11.1",
+		"@prisma/client": "^6.12.0",
 		"bcrypt": "^6.0.0",
 		"cloudinary": "^2.7.0",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.5",
 		"express": "^5.1.0",
 		"jsonwebtoken": "^9.0.2",
-		"multer": "^2.0.1",
+		"multer": "^2.0.2",
 		"nodemailer": "^7.0.5",
 		"zod": "^4.0.5"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.0.6",
+		"@biomejs/biome": "2.1.2",
 		"@total-typescript/ts-reset": "^0.6.1",
 		"@total-typescript/tsconfig": "^1.0.4",
 		"@types/bcrypt": "^5.0.2",
@@ -33,9 +33,9 @@
 		"@types/express": "^5.0.3",
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/multer": "^2.0.0",
-		"@types/node": "^24.0.13",
+		"@types/node": "^24.0.14",
 		"@types/nodemailer": "^6.4.17",
-		"prisma": "^6.11.1",
+		"prisma": "^6.12.0",
 		"tsc-alias": "^1.8.16",
 		"typescript": "^5.8.3"
 	}

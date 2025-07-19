@@ -6,6 +6,7 @@ import globalErrorHandler from "@/middlewares/globalErrorHandler.js";
 import notFound from "@/middlewares/notFound.js";
 import router from "@/routes/index.js";
 import { config } from "./config/index.js";
+import seedSuperAdmin from "./db/index.js";
 
 const app: Application = express();
 
@@ -25,7 +26,8 @@ app.get("/", (_req: express.Request, res: express.Response) => {
 });
 
 (async () => {
-	server = app.listen(config.port, () => {
+	server = app.listen(config.port, async () => {
 		console.log("App is listening on port", config.port);
+		await seedSuperAdmin();
 	});
 })();

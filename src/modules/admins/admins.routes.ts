@@ -7,15 +7,15 @@ import { AdminControllers } from "./admins.controllers.js";
 
 const router = createRouter();
 
-router.get("/", authValidator(UserRole.SUPER_ADMIN), AdminControllers.getAdmins);
-router.get("/:id", authValidator(UserRole.SUPER_ADMIN), AdminControllers.getAdminById);
+router.get("/", authValidator(UserRole.SUPERADMIN), AdminControllers.getAdmins);
+router.get("/:id", authValidator(UserRole.SUPERADMIN), AdminControllers.getAdminById);
 router.patch(
 	"/:id",
-	authValidator(UserRole.SUPER_ADMIN),
+	authValidator(UserRole.SUPERADMIN),
 	validateRequest(AdminValidations.updateRequestBodyValidation),
 	AdminControllers.updateAdminById,
 );
-router.delete("/:id", authValidator(UserRole.SUPER_ADMIN), AdminControllers.deleteAdminById);
-router.patch("/:id/delete", authValidator(UserRole.SUPER_ADMIN), AdminControllers.softDeleteAdminById);
+router.delete("/:id", authValidator(UserRole.SUPERADMIN), AdminControllers.deleteAdminById);
+router.patch("/:id/delete", authValidator(UserRole.SUPERADMIN), AdminControllers.softDeleteAdminById);
 
 export const AdminRoutes = router;

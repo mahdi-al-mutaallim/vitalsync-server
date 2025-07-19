@@ -79,7 +79,7 @@ model Patient {
 }
 
 enum UserRole {
-  SUPER_ADMIN
+  SUPERADMIN
   ADMIN
   DOCTOR
   PATIENT
