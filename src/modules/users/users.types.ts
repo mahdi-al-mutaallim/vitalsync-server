@@ -6,6 +6,8 @@ export type CreateAdmin = z.infer<typeof UsersValidations.createAdminRequestBody
 export type CreateDoctor = z.infer<typeof UsersValidations.createDoctorRequestBodyValidation>;
 export type CreatePatient = z.infer<typeof UsersValidations.createPatientRequestBodyValidation>;
 
+export type UpdateProfile = Partial<CreateAdmin["admin"] & CreateDoctor["doctor"] & CreatePatient["patient"]>;
+
 export type UserQuery = Partial<Record<"search" | "email" | "role" | "status", string>>;
 
 export type UserProfile = {

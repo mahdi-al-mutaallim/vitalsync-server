@@ -19,9 +19,10 @@ router.get(
 router.patch(
 	"/me",
 	authValidator(UserRole.SUPERADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
-	fileUploader.uploadToServer,
+	fileUploader.uploadToServer(),
 	(req, res, next) => {
 		req.body = UsersValidations.updateProfileRequestBodyValidation.parse(JSON.parse(req.body.data));
+    console.log(req.body)
 		return UserControllers.updateMyProfile(req, res, next);
 	},
 );
