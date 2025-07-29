@@ -1,6 +1,6 @@
 import type { UserRole, UserStatus } from "generated/prisma/index.js";
 import type z from "zod";
-import type { UsersValidations } from "./users.validations.js";
+import type { UsersValidations } from "./users.validators.js";
 
 export type CreateAdmin = z.infer<typeof UsersValidations.createAdminRequestBodyValidation>;
 export type CreateDoctor = z.infer<typeof UsersValidations.createDoctorRequestBodyValidation>;

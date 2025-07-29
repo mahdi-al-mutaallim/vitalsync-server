@@ -1,39 +1,28 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+import { config } from "@/config/index.js";
 import { prisma, UserRole } from "@/shared/prisma.js";
 
-const seedSuperAdmin = async () => {
-  try {
-    const userCount = await prisma.user.count();
+const seed = async () => {
+	try {
+		const superadminCount = await prisma.user.count({ where: { role: UserRole.SUPERADMIN } });
+		if (superadminCount === 0) {
+			console.log("🌱 Seeding database…");
+			console.log("✅ No MC account found — creating one…");
+			const salt = await bcrypt.genSalt(config.superadminPassSalt);
+			const password = await bcrypt.hash(config.superadminPass, salt);
 
-    if (userCount > 0) {
-      return;
-    }
-
-    const payload = {
-      password: "Gh3*Tf9m",
-      admin: {
-        name: "Mahdi Al Mutaallim",
-        email: "thecodermehedi@gmail.com",
-        contactNo: "01234567891",
-      },
-    };
-
-    const hashedPassword: string = await bcrypt.hash(payload.password, 12);
-    const newUser = {
-      email: payload.admin.email,
-      password: hashedPassword,
-      role: UserRole.SUPERADMIN,
-    };
-
-    await prisma.$transaction(async (tsx) => {
-      await tsx.user.create({ data: newUser });
-      await tsx.admin.create({ data: payload.admin });
-    });
-
-    console.log("✅ Super admin seeded successfully.");
-  } catch (error) {
-    console.error("❌ Failed to seed super admin:", error);
-  }
+			await prisma.$transaction(async (tsx) => {
+				await tsx.user.create({ data: { email: config.superadminEmail, password, role: UserRole.SUPERADMIN } });
+				await tsx.admin.create({
+					data: { name: "Klein Moretti", email: config.superadminEmail, contactNo: "01234567891" },
+				});
+			});
+			console.log(`🎉 MC account created: ${config.superadminEmail}/${config.superadminPass}`);
+			console.log("✅ Seeding complete.");
+		}
+	} catch (error) {
+		console.error("❌ Failed to seed super admin:", error);
+	}
 };
 
-export default seedSuperAdmin;
+export default seed;

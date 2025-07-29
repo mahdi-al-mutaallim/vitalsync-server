@@ -1,19 +1,19 @@
 import z from "zod";
 
-const createPatientValidationSchema = z.object({
+const createSpecialtyValidationSchema = z.object({
 	body: z.object({
 		// name: z.string().min(2).max(100),
 		// email: z.email(),
 	}),
 });
 
-const patientIdParamsValidationSchema = z.object({
+const specialtyIdParamsValidationSchema = z.object({
 	params: z.object({
 		id: z.uuid(),
 	}),
 });
 
-const updatePatientByIdValidationSchema = z.object({
+const updateSpecialtyByIdValidationSchema = z.object({
 	params: z.object({
 		id: z.uuid(),
 	}),
@@ -23,8 +23,8 @@ const updatePatientByIdValidationSchema = z.object({
 	}),
 });
 
-export const PatientsValidators = {
-	createPatientValidationSchema,
-	patientIdParamsValidationSchema,
-	updatePatientByIdValidationSchema,
+export const SpecialtiesValidators = {
+	createSpecialtyValidationSchema,
+	specialtyIdParamsValidationSchema,
+	updateSpecialtyByIdValidationSchema,
 };

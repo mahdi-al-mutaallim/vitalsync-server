@@ -1,22 +1,20 @@
 import type { RequestHandler } from "express";
-import { config } from "@/config/index.js";
 import ApiError from "@/errors/ApiError.js";
 import { jwtHelpers } from "@/helpers/jwtHelpers.js";
-import type { JwtUserPayload } from "@/modules/auth/auth.types.js";
 import httpStatus from "@/shared/httpStatus.js";
 
-const authValidator = (...roles: string[]): RequestHandler => {
+const tokenValidator = (mode: "access" | "refresh" = "access"): RequestHandler => {
 	return async (req, _res, next) => {
 		try {
-			const accessToken = req.headers.authorization;
-			if (!accessToken) {
+			const token = mode === "access" ? req.signedCookies.access_token : req.signedCookies.refresh_token;
+			if (!token) {
 				throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
 			}
-			const decoded = jwtHelpers.verifyToken(accessToken, config.accessTokenSecret) as JwtUserPayload;
-			req.user = decoded;
-			if (roles.length && !roles.includes(decoded.role)) {
+			const result = jwtHelpers.verifyJwtToken(token, mode);
+			if (!result.success) {
 				throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
 			}
+			req.user = result.decoded;
 			next();
 		} catch (error) {
 			next(error);
@@ -24,4 +22,4 @@ const authValidator = (...roles: string[]): RequestHandler => {
 	};
 };
 
-export default authValidator;
+export default tokenValidator;

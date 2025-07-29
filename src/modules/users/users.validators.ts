@@ -49,8 +49,7 @@ const createPatientRequestBodyValidation = z.object({
 const updateProfileRequestBodyValidation = adminSchema.extend(doctorSchema.shape).extend(patientSchema.shape).partial();
 
 const changeUserStatusRequestValidation = z.object({
-	params: z.object({ id: z.string() }),
-	body: z.object({ status: z.enum(UserStatus) }),
+	params: z.object({ id: z.uuid(), status: z.enum(UserStatus) }),
 });
 
 export const UsersValidations = {

@@ -1,4 +1,4 @@
-export type TDoctor = {
+export type TSpecialty = {
 	id: string;
 	name: string;
 	email: string;

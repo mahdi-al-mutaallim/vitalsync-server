@@ -1,14 +1,6 @@
-type ResetEmailParams = {
-	firstName: string;
-	resetLink: string;
-	timeLimit: string;
-};
+import type { ResetEmailParams } from "@/types/reset-email.js";
 
-export async function generateResetPasswordEmail({
-	firstName,
-	resetLink,
-	timeLimit,
-}: ResetEmailParams): Promise<string> {
+const generateResetPasswordEmail = async ({ firstName, resetLink, timeLimit }: ResetEmailParams) => {
 	return `
    <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -354,4 +346,6 @@ table, td { color: #000000; } #u_body a { color: #161a39; text-decoration: under
 </html>
 
   `;
-}
+};
+
+export default generateResetPasswordEmail;

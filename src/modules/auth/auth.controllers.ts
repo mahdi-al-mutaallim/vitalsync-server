@@ -3,29 +3,45 @@ import catchAsync from "@/shared/catchAsync.js";
 import httpStatus from "@/shared/httpStatus.js";
 import sendResponse from "@/shared/sendResponse.js";
 import { AuthServices } from "./auth.services.js";
+import { clearCookies, setCookies } from "./auth.utils.js";
 
 const loginUser = catchAsync(async (req, res) => {
 	const { refreshToken, accessToken, needsPasswordChange } = await AuthServices.loginUserFromDB(req.body);
-	res.cookie("refreshToken", refreshToken, { secure: false, httpOnly: true });
+	setCookies(res, accessToken, refreshToken);
 	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "User logged in successfully",
-		data: { accessToken, needsPasswordChange },
+		data: { needsPasswordChange },
+	});
+});
+
+const logoutUser = catchAsync(async (_req, res) => {
+	clearCookies(res);
+	sendResponse(res, {
+		code: httpStatus.OK,
+		status: "success",
+		message: "User logged out successfully",
 	});
 });
 
 const tokenRefresher = catchAsync(async (req, res) => {
-	const result = await AuthServices.getNewAccessTokenByRefreshToken(req.cookies.refreshToken);
+	if (!req.user) {
+		throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+	}
+	const { refreshToken, accessToken } = await AuthServices.generateNewJwtToken(req.user);
+	setCookies(res, accessToken, refreshToken);
 	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
 		message: "Token refreshed successfully!",
-		data: result,
 	});
 });
 
 const changePassword = catchAsync(async (req, res) => {
+	if (!req.user) {
+		throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+	}
 	const result = await AuthServices.changePasswordIntoDB(req.user, req.body);
 	sendResponse(res, {
 		code: httpStatus.OK,
@@ -36,32 +52,22 @@ const changePassword = catchAsync(async (req, res) => {
 });
 
 const forgotPassword = catchAsync(async (req, res) => {
-	const email = req.body.email;
-	if (!email) {
-		throw new ApiError(httpStatus.BAD_REQUEST, "Please provide an valid email address.");
-	}
+	const { email } = req.query as { email: string };
 	const result = await AuthServices.sendResetPasswordEmail(email);
 	if (!result) {
-		throw new ApiError(httpStatus.BAD_REQUEST, "Failed to identify your account.");
+		throw new ApiError(httpStatus.BAD_REQUEST, "No account found with this email.");
 	}
 	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
-		message: "Password reset link sent successfully.",
+		message: "Password reset link has been sent.",
 		data: result,
 	});
 });
 
 const resetPassword = catchAsync(async (req, res) => {
-	const { token } = req.query;
-	const { password } = req.body;
-	if (typeof token !== "string") {
-		throw new ApiError(httpStatus.BAD_REQUEST, "Your reset password token is required.");
-	}
-	if (!password) {
-		throw new ApiError(httpStatus.BAD_REQUEST, "New password is required to reset your password.");
-	}
-
+	const { token } = req.query as { token: string };
+	const { password } = req.body as { password: string };
 	const result = await AuthServices.resetPasswordIntoDB(token, password);
 	sendResponse(res, {
 		code: httpStatus.OK,
@@ -73,6 +79,7 @@ const resetPassword = catchAsync(async (req, res) => {
 
 export const AuthControllers = {
 	loginUser,
+	logoutUser,
 	tokenRefresher,
 	changePassword,
 	forgotPassword,

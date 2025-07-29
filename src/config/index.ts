@@ -13,13 +13,9 @@ const withEmptyStringCheck = <T extends z.ZodTypeAny>(schema: T) => z.preprocess
 // ✅ Schema builder for required strings with field-aware error
 const createRequiredString = (field: string, min = 1) =>
 	withEmptyStringCheck(
-		z
-			.string({
-				error: `${field} is required`,
-			})
-			.min(min, {
-				message: `${field} must be at least ${min} character${min > 1 && "s"}`,
-			}),
+		z.string({ error: `${field} is required` }).min(min, {
+			message: `${field} must be at least ${min} character${min > 1 && "s"}`,
+		}),
 	);
 
 // ✅ Schema builder for JWT expiresIn using SignOptions["expiresIn"]
@@ -35,13 +31,14 @@ const createExpiresIn = (field: string, defaultVal: ExpiresIn) =>
 // ✅ Env schema with all fields validated
 export const envSchema = z
 	.object({
-		port: withEmptyStringCheck(z.coerce.number().int().positive().default(3000)),
+		port: withEmptyStringCheck(z.coerce.number().int().positive().default(5000)),
 
 		nodeEnv: withEmptyStringCheck(z.enum(["development", "production", "test"]).default("development")),
 
 		accessTokenSecret: createRequiredString("ACCESS_TOKEN_SECRET", 16),
 		refreshTokenSecret: createRequiredString("REFRESH_TOKEN_SECRET", 16),
 		resetTokenSecret: createRequiredString("RESET_TOKEN_SECRET", 16),
+		cookieSecret: createRequiredString("COOKIE_SECRET", 16),
 
 		accessTokenExpiresIn: createExpiresIn("ACCESS_TOKEN_EXPIRES_IN", "30m"),
 		refreshTokenExpiresIn: createExpiresIn("REFRESH_TOKEN_EXPIRES_IN", "7d"),
@@ -51,6 +48,15 @@ export const envSchema = z
 		cloudinaryCloudName: createRequiredString("CLOUDINARY_CLOUD_NAME"),
 		cloudinaryApiKey: createRequiredString("CLOUDINARY_API_KEY"),
 		cloudinaryApiSecret: createRequiredString("CLOUDINARY_API_SECRET"),
+		superadminEmail: createRequiredString("SUPERADMIN_EMAIL"),
+		superadminPass: createRequiredString("SUPERADMIN_PASS"),
+		superadminPassSalt: withEmptyStringCheck(z.coerce.number().int().positive().default(12)),
+		smtpHost: createRequiredString("SMTP_HOST"),
+		smtpPort: withEmptyStringCheck(z.coerce.number().int().positive().default(587)),
+		smtpUser: createRequiredString("SMTP_USER"),
+		smtpPass: createRequiredString("SMTP_PASS"),
+		maxFailedAttempts: withEmptyStringCheck(z.coerce.number().int().positive().default(5)),
+		clientDomain: createRequiredString("CLIENT_DOMAIN").default("localhost"),
 	})
 	.strict();
 
@@ -68,6 +74,16 @@ const rawEnv = {
 	cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
 	cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
 	cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
+	superadminEmail: process.env.SUPERADMIN_EMAIL,
+	superadminPass: process.env.SUPERADMIN_PASS,
+	superadminPassSalt: process.env.SUPERADMIN_PASS_SALT,
+	smtpHost: process.env.SMTP_HOST,
+	smtpPort: process.env.SMTP_PORT,
+	smtpUser: process.env.SMTP_USER,
+	smtpPass: process.env.SMTP_PASS,
+	maxFailedAttempts: process.env.MAX_FAILED_ATTEMPTS,
+	clientDomain: process.env.CLIENT_DOMAIN,
+	cookieSecret: process.env.COOKIE_SECRET,
 };
 
 // ✅ Parse and validate
@@ -75,7 +91,7 @@ const env = envSchema.safeParse(rawEnv);
 
 if (!env.success) {
 	console.error("❌ Invalid environment variables:");
-	console.error(JSON.stringify(env.error.format(), null, 2));
+	console.error(JSON.stringify(z.treeifyError(env.error), null, 2));
 	process.exit(1);
 }
 

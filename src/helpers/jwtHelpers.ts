@@ -1,13 +1,27 @@
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { config } from "@/config/index.js";
+import type { JwtTokenPayload, JwtTokenType } from "@/types/jwt.js";
+import extractErrorMessage from "./extractErrorMessage.js";
 
-const generateToken = (
-	payload: string | Buffer | object,
-	secret: jwt.Secret | jwt.PrivateKey,
-	expiresIn: jwt.SignOptions["expiresIn"],
-) => {
-	return jwt.sign(payload, secret, { algorithm: "HS256", expiresIn });
+const generateJwtToken = (payload: JwtTokenPayload) => {
+	const secret = payload.type === "access" ? config.accessTokenSecret : config.refreshTokenSecret;
+	const expiresIn = payload.type === "access" ? config.accessTokenExpiresIn : config.refreshTokenExpiresIn;
+	return jwt.sign(payload, secret, { expiresIn });
 };
 
-const verifyToken = <T>(token: string, secret: jwt.Secret): T => jwt.verify(token, secret) as T;
+const verifyJwtToken = (token: string, tokenType: JwtTokenType) => {
+	const secret =
+		tokenType === "access"
+			? config.accessTokenSecret
+			: tokenType === "refresh"
+				? config.refreshTokenSecret
+				: config.resetTokenSecret;
+	try {
+		const decoded = jwt.verify(token, secret) as JwtTokenPayload;
+		return { success: true, decoded };
+	} catch (error) {
+		return { success: false, error: extractErrorMessage(error) };
+	}
+};
 
-export const jwtHelpers = { generateToken, verifyToken };
+export const jwtHelpers = { generateJwtToken, verifyJwtToken };

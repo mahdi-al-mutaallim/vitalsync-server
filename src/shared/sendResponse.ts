@@ -10,15 +10,15 @@ const sendResponse = <T>(
 			page: number;
 			limit: number;
 			total: number;
-		};
-		data: T | null | undefined;
+		} | null;
+		data?: T | null;
 	},
 ) => {
 	res.status(data.code).json({
 		status: data.status,
 		message: data.message,
-		meta: data.meta || null || undefined,
-		data: data.data || null || undefined,
+		meta: data.meta || null,
+		data: data.data || null,
 	});
 };
 

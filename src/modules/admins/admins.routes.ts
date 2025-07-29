@@ -1,21 +1,41 @@
 import { UserRole } from "generated/prisma/index.js";
-import authValidator from "@/middlewares/authValidator.js";
+import accessValidator from "@/middlewares/accessValidator.js";
+import tokenValidator from "@/middlewares/tokenValidator.js";
 import validateRequest from "@/middlewares/validateRequest.js";
 import { createRouter } from "@/shared/createRouter.js";
-import { AdminValidations } from "./admin.validations.js";
+import { AdminValidations } from "./admin.validators.js";
 import { AdminControllers } from "./admins.controllers.js";
 
 const router = createRouter();
 
-router.get("/", authValidator(UserRole.SUPERADMIN), AdminControllers.getAdmins);
-router.get("/:id", authValidator(UserRole.SUPERADMIN), AdminControllers.getAdminById);
+router.get("/", tokenValidator(), accessValidator(UserRole.SUPERADMIN, UserRole.ADMIN), AdminControllers.getAdmins);
+router.get(
+	"/:id",
+	tokenValidator(),
+	accessValidator(UserRole.SUPERADMIN, UserRole.ADMIN),
+	validateRequest(AdminValidations.UserIdParamsRequestValidationSchema),
+	AdminControllers.getAdminById,
+);
 router.patch(
 	"/:id",
-	authValidator(UserRole.SUPERADMIN),
-	validateRequest(AdminValidations.updateRequestBodyValidation),
+	tokenValidator(),
+	accessValidator(UserRole.SUPERADMIN, UserRole.ADMIN),
+	validateRequest(AdminValidations.updateAdminByIdRequestValidationSchema),
 	AdminControllers.updateAdminById,
 );
-router.delete("/:id", authValidator(UserRole.SUPERADMIN), AdminControllers.deleteAdminById);
-router.patch("/:id/delete", authValidator(UserRole.SUPERADMIN), AdminControllers.softDeleteAdminById);
+router.delete(
+	"/:id",
+	tokenValidator(),
+	accessValidator(UserRole.SUPERADMIN, UserRole.ADMIN),
+	validateRequest(AdminValidations.UserIdParamsRequestValidationSchema),
+	AdminControllers.deleteAdminById,
+);
+router.patch(
+	"/:id/delete",
+	tokenValidator(),
+	accessValidator(UserRole.SUPERADMIN, UserRole.ADMIN),
+	validateRequest(AdminValidations.UserIdParamsRequestValidationSchema),
+	AdminControllers.softDeleteAdminById,
+);
 
 export const AdminRoutes = router;
