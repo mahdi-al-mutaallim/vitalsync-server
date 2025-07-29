@@ -1,4 +1,4 @@
-import { UserStatus } from "generated/prisma/index.js";
+import type { UserStatus } from "generated/prisma/index.js";
 import ApiError from "@/errors/ApiError.js";
 import catchAsync from "@/shared/catchAsync.js";
 import httpStatus from "@/shared/httpStatus.js";
@@ -54,15 +54,8 @@ const getUsers = catchAsync(async (req, res) => {
 });
 
 const changeStatusById = catchAsync(async (req, res) => {
-	const id = req.params.id;
-	const status = req.params.status;
-	if (typeof id !== "string") {
-		throw new ApiError(httpStatus.BAD_REQUEST, "Please provide an valid id");
-	}
-	if (!Object.values(UserStatus).includes(status as UserStatus)) {
-		throw new ApiError(httpStatus.BAD_REQUEST, "Please provide an valid status");
-	}
-	const result = await UserServices.changeStatusByIdFromDB(id, status as UserStatus);
+	const { id, status } = req.params as { id: string; status: UserStatus };
+	const result = await UserServices.changeStatusByIdFromDB(id, status);
 	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
@@ -72,7 +65,10 @@ const changeStatusById = catchAsync(async (req, res) => {
 });
 
 const getMyProfile = catchAsync(async (req, res) => {
-	const data = await UserServices.getUserByIdFromDB(req.user.id as string);
+	if (!req.user) {
+		throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+	}
+	const data = await UserServices.getUserByIdFromDB(req.user.id);
 	sendResponse(res, {
 		code: httpStatus.OK,
 		status: "success",
@@ -82,6 +78,9 @@ const getMyProfile = catchAsync(async (req, res) => {
 });
 
 const updateMyProfile = catchAsync(async (req, res) => {
+	if (!req.user) {
+		throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+	}
 	const data = await UserServices.updateMyProfileIntoDB(req.user.id, req.file, req.body);
 	sendResponse(res, {
 		code: httpStatus.OK,
