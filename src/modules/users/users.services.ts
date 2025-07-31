@@ -4,7 +4,7 @@ import ApiError from "@/errors/ApiError.js";
 import { fileUploader } from "@/helpers/fileUploader.js";
 import { paginationHelper } from "@/helpers/paginationHelper.js";
 import httpStatus from "@/shared/httpStatus.js";
-import { type Admin, type Prisma, prisma, UserRole, UserStatus } from "@/shared/prisma.js";
+import { type Prisma, prisma, UserRole, UserStatus } from "@/shared/prisma.js";
 import type { PaginationQueryOptions } from "@/types/pagination.js";
 import { UserSearchFields } from "./user.constants.js";
 import type {
